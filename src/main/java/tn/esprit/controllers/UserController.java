@@ -1,38 +1,29 @@
 package tn.esprit.controllers;
 
 
-import lombok.AllArgsConstructor;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.OAuth2Constants;
-import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
-import org.keycloak.authorization.client.AuthzClient;
-import org.keycloak.authorization.client.Configuration;
-import org.keycloak.representations.AccessTokenResponse;
 import org.keycloak.representations.idm.CredentialRepresentation;
-import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import tn.esprit.dto.EventCalendar;
 import tn.esprit.dto.UserDTO;
 import tn.esprit.entities.*;
-import tn.esprit.exceptions.CustomException;
 import tn.esprit.services.EmailService;
 import tn.esprit.services.IUserService;
 
-import javax.validation.Valid;
-import javax.ws.rs.core.Response;
 import java.util.*;
 
 
@@ -43,9 +34,9 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
 
-    private String authServerUrl = "http://localhost:8180";
+    private String authServerUrl = "http://localhost:8080";
     private String realm = "spring-boot-microservices-realm";
-    private String clientId = "spring-cloud-client";
+    private String clientId = "client_id";
     private String clientSecret = "yJBHwxHc9uwxn2f6xGmxrSVIEuD9y875";
     private String real ="master";
     private String client ="admin-cli";
@@ -123,15 +114,7 @@ public class UserController {
 
 
 
-    @PutMapping("/admin/banUser/{email}")
-    public String banUser(@PathVariable String email){
-        return userService.banUser(email);
-}
 
-    @PutMapping("/admin/unbanUser/{email}")
-    public String unbanUser(@PathVariable String email){
-        return userService.unbanUser(email);
-    }
     @GetMapping("/admin/search/{data}")
     public List<User> search(@PathVariable String data){
         return userService.search(data);
@@ -141,41 +124,18 @@ public class UserController {
     public List<User> getAllUsers(){
         return userService.getAll();
     }
-    @GetMapping("/admin/getEnt")
-    public List<Entreprise> getEnt(){
-        return userService.getEnt();
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        return new ResponseEntity<>(userService.addUser(user), HttpStatus.OK);
     }
-    @GetMapping("/admin/getUserById/{id}")
-    public User getUserById(@PathVariable Long id){
-        return userService.findUserById(id);
+    @RequestMapping
+    @PreAuthorize("hasRole('user')")
+    public ResponseEntity<List<User>> getAll() {
+        return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
     }
 
 
-    @GetMapping("/{userId}/reunions")
-    public ResponseEntity<List<Reunion>> getUserReunions(@PathVariable String userId) {
-        List<Reunion> reunions = userService.getUserReunions(userId);
-        return ResponseEntity.ok(reunions);
-    }
-
-    @GetMapping("/{userId}/events")
-    public ResponseEntity<List<Event>> getUserEvents(@PathVariable Long userId) {
-        List<Event> events = userService.getUserEvents(userId);
-        return ResponseEntity.ok(events);
-    }
-
-    @GetMapping("/{userId}/conferences")
-    public ResponseEntity<List<Event>> getUserConferences(@PathVariable Long userId) {
-        List<Event> conferences = userService.getUserConference(userId);
-        return ResponseEntity.ok(conferences);
-    }
-    @GetMapping("/{userId}/Calendar")
-    public List<EventCalendar> getUserCalendar(@PathVariable String userId) {
-     return   userService.getUserCalendarEvents(userId);
-
-    }
-    @GetMapping("/{userId}/bookings")
-    public List<EventBooking> getUserBookings(@PathVariable String userId) {
-        return   userService.getUserBookings(userId);
-
-    }
 }

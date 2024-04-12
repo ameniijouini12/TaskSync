@@ -30,14 +30,14 @@ public class User {
     private String email;
     @Enumerated(EnumType.STRING)
     private ERole role;
-    private String job;
-    private String image;
-    private boolean active;
-    private String tel;
+    //private String job;
+    //private String image;
+    //private boolean active;
+   // private String tel;
 
     private String password;
 
-    private String code;
+   /* private String code;
 
     @Transient
     private int statusCode;
@@ -46,9 +46,9 @@ public class User {
 
     private String bestFriend;
     private String favoritePet;
-    private String entreprise;
+    private String entreprise;*/
 
-    @ManyToMany(cascade = CascadeType.ALL)
+   /* @ManyToMany(cascade = CascadeType.ALL)
     private List<Event> events;
 
     @OneToMany(mappedBy = "eventOrganizer",cascade = CascadeType.ALL)
@@ -59,6 +59,6 @@ public class User {
 
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-    private List<EventBooking> eventBookings;
+    private List<EventBooking> eventBookings;*/
 }
 
