@@ -1,0 +1,14 @@
+{# templates/user/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <h2>Create a new user</h2>
+
+    {{ form_start(form) }}
+        {{ form_row(form.firstName) }}
+        {{ form_row(form.lastName) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.submit) }}
+    {{ form_end(form) }}
+{% endblock %}

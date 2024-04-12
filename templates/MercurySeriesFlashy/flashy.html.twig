@@ -1,0 +1,50 @@
+{# templates/bundles/MercurySeriesFlashyBundle/flashy.html.twig #}
+
+{% for message in app.flashes('mercuryseries_flashy_notification') %}
+    <div class="flashy flashy--{{ message.type }}">
+        <a class="flashy__body" href="{{ message.link }}" target="_blank">{{ message.message }}</a>
+    </div>
+{% endfor %}
+
+{% block javascripts %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const flashMessages = document.querySelectorAll('.flashy');
+
+            flashMessages.forEach(function(element) {
+                const message = element.textContent.trim();
+                const link = element.querySelector('.flashy__body').getAttribute('href');
+                const type = element.classList[1].replace('flashy--', '');
+
+                // You can customize the styling or behavior based on the message type
+                switch (type) {
+                    case 'success':
+                        // Custom success message styling or behavior
+                        break;
+                    case 'error':
+                        // Custom error message styling or behavior
+                        break;
+                    case 'info':
+                        // Custom info message styling or behavior
+                        break;
+                    case 'warning':
+                        // Custom warning message styling or behavior
+                        break;
+                    default:
+                        break;
+                }
+
+                // Optional: Automatically dismiss the message after a certain time
+                setTimeout(function() {
+                    element.remove();
+                }, 5000); // Remove after 5 seconds
+
+                // Optional: Redirect to the link on message click
+                element.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    window.open(link, "_blank");
+                });
+            });
+        });
+    </script>
+{% endblock %}
